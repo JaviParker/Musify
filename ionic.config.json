@@ -1,0 +1,7 @@
+{
+  "name": "StarWars",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
