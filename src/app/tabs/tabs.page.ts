@@ -19,8 +19,8 @@ export class TabsPage {
   ngOnInit() {
     this.authService.renewTokenNow();
     // Verificar y renovar el token antes de hacer la solicitud
-    // this.authService.renewTokenIfNeeded().subscribe(() => {
-    //   // Realizar la solicitud una vez que se haya renovado el token (o si no es necesario renovarlo)
-    // });
+    this.authService.renewTokenIfNeeded().subscribe(() => {
+      // Realizar la solicitud una vez que se haya renovado el token (o si no es necesario renovarlo)
+    });
   }
 }
