@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { authConfig } from '../auth-config';
+import { authConfig, getRedirectUri } from '../auth-config';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,7 @@ export class AuthService {
   private apiUrl = '...'; // URL del servidor de autenticación
   private accessToken: string | null = null;
   private tokenExpirationTime: Date | null = null;
+  private redirectUri = getRedirectUri();
 
   constructor(private http: HttpClient) {
     // Al inicializar el servicio, cargar el token y el tiempo de expiración si están presentes
@@ -46,7 +47,7 @@ export class AuthService {
     const params = new HttpParams()
       .set('response_type', 'token')
       .set('client_id', authConfig.clientId)
-      .set('redirect_uri', authConfig.redirectUri)
+      .set('redirect_uri', this.redirectUri)
       .set('scope', 'user-read-private user-read-email user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private') // Agrega 'user-modify-playback-state' al scope
       .set('show_dialog', 'true'); // Opcional: para forzar al usuario a aprobar la aplicación nuevamente si es necesario
   
