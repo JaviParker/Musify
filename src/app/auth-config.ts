@@ -6,7 +6,7 @@ export const authConfig = {
   tokenEndpoint: 'https://accounts.spotify.com/api/token',
   redirectUris: {
       local: 'http://localhost:8100/tabs/tab1',
-      netlify: 'https://master--musify-up.netlify.app/tabs/tab1'
+      netlify: 'https://master--musify-up.netlify.app/'
   },
   scopes: ['user-read-private', 'user-read-email'],
   requireHttps: false
