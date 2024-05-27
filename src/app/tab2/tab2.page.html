@@ -1,17 +1,22 @@
+<!-- src/app/tab2/tab2.page.html -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
-      Tab 2
+      My Playlists
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let playlist of playlists" (click)="goToPlaylistDetails(playlist.id)">
+      <ion-thumbnail slot="start" *ngIf="playlist.images && playlist.images.length > 0"> 
+        <img [src]="playlist.images[0]?.url" alt="{{ playlist.name }}">
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ playlist.name }}</h2>
+        <p>{{ playlist.description }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

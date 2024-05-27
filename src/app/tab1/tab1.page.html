@@ -1,17 +1,22 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Top Playlists</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+<ion-content>
+  <div class="grid-container">
+    <div class="grid-item" *ngFor="let playlist of playlists" (click)="goToPlaylistDetails(playlist.id)">
+      <ion-card class="card">  
+        <div class="img-container" >
+          <div class="img">
+            <img [src]="playlist.images[0]?.url" alt="{{ playlist.name }}">
+          </div>
+          <div class="description card">
+            <span class="title">{{ playlist.name }}</span>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+  </div>
 </ion-content>

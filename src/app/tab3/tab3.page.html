@@ -1,17 +1,48 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
-  </ion-toolbar>
+  <div class="back-button-container">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="tabs"></ion-back-button>
+    </ion-buttons>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-buttons slot="start">
+    <ion-back-button defaultHref="/tabs"></ion-back-button>
+  </ion-buttons>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <div *ngIf="currentTrack?.item; else noTrackTemplate">
+    <div class="background-image" [ngStyle]="{'background-image': 'url(' + currentTrack?.item?.album?.images[0]?.url + ')'}"></div>
+    <div class="overlay"></div>
+    <div class="player-container">
+      <div class="album-art-container">
+        <img [src]="currentTrack?.item?.album?.images[0]?.url" alt="Album Art" class="album-art">
+      </div>
+      <div class="track-info">
+        <h2 class="track-name">{{ currentTrack?.item?.name }}</h2>
+        <p class="track-artist">{{ currentTrack?.item?.artists[0]?.name }}</p>
+      </div>
+      <div class="controls">
+        <ion-button (click)="previousTrack()" fill="clear">
+          <ion-icon name="play-back"></ion-icon>
+        </ion-button>
+        <ion-button (click)="play()" fill="clear">
+          <ion-icon name="play"></ion-icon>
+        </ion-button>
+        <ion-button (click)="pause()" fill="clear">
+          <ion-icon name="pause"></ion-icon>
+        </ion-button>
+        <ion-button (click)="nextTrack()" fill="clear">
+          <ion-icon name="play-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noTrackTemplate>
+    <div class="no-track">
+      <h2>No hay nada en reproducción</h2>
+      <p>Primero tiene que estar escuchando algo en Spotify.</p>
+    </div>
+  </ng-template>
 </ion-content>

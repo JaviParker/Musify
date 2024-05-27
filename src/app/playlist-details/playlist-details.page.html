@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <div class="back-button-container">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="tabs"></ion-back-button>
+    </ion-buttons>
+  </div>
+</ion-header>
+
+<ion-content>
+  <div class="playlist-header" [style.backgroundImage]="'url(' + playlistImage + ')'"> 
+    <img [src]="playlistImage" alt="Playlist Image" class="playlist-image">
+    <div class="playlist-info">
+      <h1>{{playlistName}}</h1>
+    </div>
+  </div>
+  <ion-list>
+    <ion-item *ngFor="let track of playlistTracks" (click)="playTrack(track.track.uri, contextUri)" class="itemSong">
+      <ion-thumbnail slot="start">
+        <img [src]="track.track.album.images[0]?.url" alt="Album Image">
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ track.track.name }}</h2>
+        <p>{{ track.track.artists[0].name }}</p>
+      </ion-label>
+      <!-- <ion-button (click)="playTrack(track.track.uri, contextUri)" shape="round" fill="clear">
+        <ion-icon name="play"></ion-icon>
+      </ion-button> -->
+      <ion-button (click)="addTrackToPlaylist(track.track.uri)" shape="round" fill="clear">
+        <ion-icon name="heart"></ion-icon>
+      </ion-button>
+      <ion-button (click)="deleteTrack(track.track.id)" color="danger" shape="round" fill="clear">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
