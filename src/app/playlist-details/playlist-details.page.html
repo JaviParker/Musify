@@ -14,19 +14,16 @@
     </div>
   </div>
   <ion-list>
-    <ion-item *ngFor="let track of playlistTracks" (click)="playTrack(track.track.uri, contextUri)" class="itemSong">
-      <ion-thumbnail slot="start">
+    <ion-item *ngFor="let track of playlistTracks" class="itemSong">
+      <ion-thumbnail slot="start" (click)="playTrack(track.track.uri, contextUri)">
         <img [src]="track.track.album.images[0]?.url" alt="Album Image">
       </ion-thumbnail>
-      <ion-label>
+      <ion-label (click)="playTrack(track.track.uri, contextUri)">
         <h2>{{ track.track.name }}</h2>
         <p>{{ track.track.artists[0].name }}</p>
       </ion-label>
-      <!-- <ion-button (click)="playTrack(track.track.uri, contextUri)" shape="round" fill="clear">
-        <ion-icon name="play"></ion-icon>
-      </ion-button> -->
-      <ion-button (click)="addTrackToPlaylist(track.track.uri)" shape="round" fill="clear">
-        <ion-icon name="heart"></ion-icon>
+      <ion-button (click)="openPlaylistSelection(track.track.uri)" shape="round" fill="clear">
+        <ion-icon name="add-circle-outline"></ion-icon>
       </ion-button>
       <ion-button (click)="deleteTrack(track.track.id)" color="danger" shape="round" fill="clear">
         <ion-icon name="trash"></ion-icon>

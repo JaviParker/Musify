@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.services';
 
 @Component({
@@ -7,20 +6,18 @@ import { AuthService } from '../services/auth.services';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage {
-
-  people = [] as any[];
-
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+export class TabsPage implements OnInit {
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.authService.renewTokenNow();
-    // Verificar y renovar el token antes de hacer la solicitud
-    this.authService.renewTokenIfNeeded().subscribe(() => {
-      // Realizar la solicitud una vez que se haya renovado el token (o si no es necesario renovarlo)
-    });
+    this.authService.renewTokenIfNeeded().subscribe(
+      () => {
+        // Realizar la solicitud una vez que se haya renovado el token (o si no es necesario renovarlo)
+      },
+      (error) => {
+        console.error('Error renewing token:', error);
+        // Opcional: manejar el error (por ejemplo, redirigir al usuario a una página de error)
+      }
+    );
   }
 }

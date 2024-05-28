@@ -8,9 +8,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { OAuthModule, OAuthService, AuthConfig } from 'angular-oauth2-oidc';
 import { authConfig } from './auth-config';
+import { PlaylistSelectionModalComponent } from './playlist-selection-modal/playlist-selection-modal.component'; // Asegúrate de importar tu componente
+
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, PlaylistSelectionModalComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

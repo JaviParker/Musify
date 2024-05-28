@@ -3,7 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { SpotifyService } from '../services/spotify.service';
 import { AuthService } from '../services/auth.services';
 import { switchMap } from 'rxjs';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController, ActionSheetController, ModalController } from '@ionic/angular';
+import { SpotifyPlaylist } from '../models/spotify.models';
+import { PlaylistSelectionModalComponent } from '../playlist-selection-modal/playlist-selection-modal.component';
 
 @Component({
   selector: 'app-playlist-details',
@@ -15,17 +17,21 @@ export class PlaylistDetailsPage implements OnInit {
   playlistTracks: any[] = [];
   devices: any[] = [];
   contextUri: string | any;
-  fakeLikesId = "247v1Aqw08CAInIxS5gIEe";
-  tracks: any[] = [];
   playlistImage: string = "";
   playlistName: any;
-
+  userPlaylists: any[] = []; // Inicializar como un array vacío
+  tracks: any[] = []; // Asegurarse de declarar la propiedad tracks
+  playlists: SpotifyPlaylist[] = [];
+  playlistsLoaded: boolean = false;
+  
   constructor(
     private route: ActivatedRoute,
     private spotifyService: SpotifyService,
     private authService: AuthService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private actionSheetController: ActionSheetController,
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -34,6 +40,7 @@ export class PlaylistDetailsPage implements OnInit {
       this.getPlaylistDetails(this.playlistId);
     });
     this.getAvailableDevices();
+    this.loadUserPlaylists();
   }
 
   getPlaylistDetails(playlistId: string) {
@@ -93,11 +100,72 @@ export class PlaylistDetailsPage implements OnInit {
     await toast.present();
   }
 
-  async addTrackToPlaylist(trackUri: string) {
-    this.spotifyService.addTrackToPlaylist("247v1Aqw08CAInIxS5gIEe", trackUri).subscribe(
+  // async loadUserPlaylists() {
+  //   this.spotifyService.getUserPlaylists().subscribe(
+  //     (playlists: any) => {
+  //       this.userPlaylists = playlists.items || []; // Asegurarse de que sea un array
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching user playlists:', error);
+  //       this.userPlaylists = []; // Asegurarse de que sea un array
+  //     }
+  //   );
+  // }
+
+  
+  getUserPlaylists(){
+    this.spotifyService.getUserPlaylists().subscribe(
+      playlists => this.playlists = playlists,
+      error => console.error('Error fetching user playlists', error),
+    );
+  }
+
+  async loadUserPlaylists() {
+    this.spotifyService.getUserPlaylists().subscribe(
+      (playlists: any) => {
+        this.userPlaylists = playlists.items || [];
+        this.playlistsLoaded = true; // Marcar como cargado una vez que se obtienen las listas de reproducción
+      },
+      (error) => {
+        console.error('Error fetching user playlists:', error);
+        this.userPlaylists = [];
+        this.playlistsLoaded = true; // Marcar como cargado incluso si hay un error
+      }
+    );
+  }
+
+  async openPlaylistSelection(trackUri: string) {
+
+    let privatePlaylists: SpotifyPlaylist[] = [];
+
+    this.spotifyService.getUserPlaylists().subscribe(
+      async playlists => {
+        const modal = await this.modalController.create({
+          component: PlaylistSelectionModalComponent,
+          componentProps: {
+            playlists: playlists
+          },
+        });
+    
+        modal.onDidDismiss().then((data) => {
+          const playlistId = data?.data;
+          if (playlistId) {
+            this.addTrackToSelectedPlaylist(trackUri, playlistId);
+          }
+        });
+    
+        await modal.present();
+      },
+      error => console.error('Error fetching user playlists', error)
+    );
+  }
+
+
+  async addTrackToSelectedPlaylist(trackUri: string, playlistId: string) {
+    this.spotifyService.addTrackToPlaylist(playlistId, trackUri).subscribe(
       async () => {
         const toast = await this.toastController.create({
-          message: 'Track added to playlist',
+          message: `Track added to ${playlistId}`,
           duration: 2000,
           position: 'bottom'
         });
@@ -133,7 +201,10 @@ export class PlaylistDetailsPage implements OnInit {
             this.spotifyService.removeTrackFromPlaylist(this.playlistId, trackId).subscribe(
               response => {
                 console.log('Track deleted', response);
-                this.loadTracks();
+                this.route.params.subscribe(params => {
+                  this.playlistId = params['id'];
+                  this.getPlaylistDetails(this.playlistId);
+                });
               },
               error => console.error('Error deleting track', error)
             );
@@ -155,13 +226,13 @@ export class PlaylistDetailsPage implements OnInit {
   async sinDispositivosActivos(){
     const alert = await this.alertController.create({
       header: 'No active devices',
-      message: 'You should open and play something in Spotify firts',
+      message: 'You should open and play something in Spotify first',
       buttons: [
         {
           text: 'Ok',
           role: 'ok',
           handler: () => {
-            console.log('Open your Spotify ab play something, then try it again');
+            console.log('Open your Spotify and play something, then try it again');
           }
         }
       ]
