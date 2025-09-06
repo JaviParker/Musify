@@ -19,44 +19,105 @@ export class SpotifyService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   getTopPlaylists(): Observable<SpotifyPlaylist[]> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
     return this.http.get<{ playlists: SpotifyPlaylistsResponse }>(`${this.apiUrl}/browse/featured-playlists`, { headers })
-      .pipe(map(response => response.playlists.items));
+      .pipe(
+        map(response => response.playlists.items),
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   getUserPlaylists(): Observable<SpotifyPlaylist[]> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
     return this.http.get<SpotifyPlaylistsResponse>(`${this.apiUrl}/me/playlists`, { headers })
-      .pipe(map(response => response.items));
+      .pipe(
+        map(response => response.items),
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   getUserProfile(): Observable<any> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`
     });
 
-    return this.http.get(`${this.apiUrl}/me`, { headers });
+    return this.http.get(`${this.apiUrl}/me`, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   getPlaylistTracks(playlistId: string): Observable<any> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`
     });
 
-    return this.http.get(`${this.apiUrl}/playlists/${playlistId}/tracks`, { headers });
+    return this.http.get(`${this.apiUrl}/playlists/${playlistId}/tracks`, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   getDevices(): Observable<any> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`
@@ -64,54 +125,128 @@ export class SpotifyService {
 
     return this.http.get<any>(`${this.apiUrl}/me/player/devices`, { headers }).pipe(
       catchError(error => {
+        if (error.status === 401) {
+          this.authService.clearToken();
+          this.authService.authenticate();
+        }
         return throwError(error);
       })
     );
   }
 
   getCurrentlyPlaying(): Observable<SpotifyCurrentlyPlaying> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
-    return this.http.get<SpotifyCurrentlyPlaying>(`${this.apiUrl}/me/player/currently-playing`, { headers });
+    return this.http.get<SpotifyCurrentlyPlaying>(`${this.apiUrl}/me/player/currently-playing`, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   play(): Observable<void> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
-    return this.http.put<void>(`${this.apiUrl}/me/player/play`, null, { headers });
+    return this.http.put<void>(`${this.apiUrl}/me/player/play`, null, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   pause(): Observable<void> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
-    return this.http.put<void>(`${this.apiUrl}/me/player/pause`, null, { headers });
+    return this.http.put<void>(`${this.apiUrl}/me/player/pause`, null, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   nextTrack(): Observable<void> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
-    return this.http.post<void>(`${this.apiUrl}/me/player/next`, null, { headers });
+    return this.http.post<void>(`${this.apiUrl}/me/player/next`, null, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   previousTrack(): Observable<void> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
 
-    return this.http.post<void>(`${this.apiUrl}/me/player/previous`, null, { headers });
+    return this.http.post<void>(`${this.apiUrl}/me/player/previous`, null, { headers })
+      .pipe(
+        catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
+          return throwError(error);
+        })
+      );
   }
 
   playTrack(trackUri: string, contextUri: string): Observable<void> {
@@ -156,6 +291,11 @@ export class SpotifyService {
   }
 
   getPlaylist(playlistId: string): Observable<SpotifyPlaylist> {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.authenticate();
+      return throwError('Not authenticated');
+    }
+
     const accessToken = this.authService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
@@ -164,6 +304,10 @@ export class SpotifyService {
     return this.http.get<SpotifyPlaylist>(`${this.apiUrl}/playlists/${playlistId}`, { headers })
       .pipe(
         catchError(error => {
+          if (error.status === 401) {
+            this.authService.clearToken();
+            this.authService.authenticate();
+          }
           console.error('Error fetching playlist:', error);
           return throwError(error);
         })

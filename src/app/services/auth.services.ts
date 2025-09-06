@@ -42,11 +42,12 @@ export class AuthService {
   }
 
   authenticate(): void {
+    const scopes = authConfig.scopes.join(' ');
     const params = new HttpParams()
       .set('response_type', 'token')
       .set('client_id', authConfig.clientId)
       .set('redirect_uri', this.redirectUri)
-      .set('scope', 'user-read-private user-read-email user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private')
+      .set('scope', scopes)
       .set('show_dialog', 'true');
 
     window.location.href = `${authConfig.authorizationEndpoint}?${params.toString()}`;
@@ -69,6 +70,10 @@ export class AuthService {
 
   isTokenExpired(): boolean {
     return !this.accessToken || !this.tokenExpirationTime || new Date() >= this.tokenExpirationTime;
+  }
+
+  isAuthenticated(): boolean {
+    return !this.isTokenExpired() && !!this.accessToken;
   }
 
   renewTokenIfNeeded(): Observable<void> {

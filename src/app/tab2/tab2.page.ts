@@ -17,9 +17,19 @@ export class Tab2Page implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadUserPlaylists();
+  }
+
+  private loadUserPlaylists() {
     this.spotifyService.getUserPlaylists().subscribe(
       playlists => this.playlists = playlists,
-      error => console.error('Error fetching user playlists', error)
+      error => {
+        console.error('Error fetching user playlists', error);
+        if (error === 'Not authenticated') {
+          // Authentication will be handled by the service
+          return;
+        }
+      }
     );
   }
   goToPlaylistDetails(playlistId: string) {

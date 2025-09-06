@@ -15,16 +15,23 @@ export class Tab3Page implements OnInit {
   constructor(private spotifyService: SpotifyService) { }
 
   ngOnInit() {
+    this.loadUserProfile();
+    this.getCurrentlyPlaying();
+  }
+
+  private loadUserProfile() {
     this.spotifyService.getUserProfile().subscribe(
       (profile) => {
         this.userProfile = profile;
       },
       (error) => {
         console.error('Error fetching user profile:', error);
+        if (error === 'Not authenticated') {
+          // Authentication will be handled by the service
+          return;
+        }
       }
     );
-
-    this.getCurrentlyPlaying();
   }
 
   ionViewWillEnter() {
@@ -92,6 +99,10 @@ previousTrack() {
       },
       (error) => {
         console.error('Error fetching currently playing track:', error);
+        if (error === 'Not authenticated') {
+          // Authentication will be handled by the service
+          return;
+        }
       }
     );
   }

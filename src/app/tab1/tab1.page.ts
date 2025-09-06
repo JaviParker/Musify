@@ -18,9 +18,19 @@ export class Tab1Page implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadPlaylists();
+  }
+
+  private loadPlaylists() {
     this.spotifyService.getTopPlaylists().subscribe(
       playlists => this.playlists = playlists,
-      error => console.error('Error fetching playlists', error)
+      error => {
+        console.error('Error fetching playlists', error);
+        if (error === 'Not authenticated') {
+          // Authentication will be handled by the service
+          return;
+        }
+      }
     );
   }
 

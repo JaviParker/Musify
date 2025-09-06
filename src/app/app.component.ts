@@ -20,15 +20,14 @@ export class AppComponent implements OnInit {
   initializeApp() {
     this.platform.ready().then(() => {
       this.authService.handleAuthentication();
-      if (!this.authService.getToken()) {
+      // Only authenticate if no token exists and not already in auth flow
+      if (!this.authService.getToken() && !window.location.hash.includes('access_token')) {
         this.authService.authenticate();
       }
     });
   }
 
   ngOnInit() {
-    if (!this.authService.getToken()) {
-      this.authService.authenticate();
-    }
+    // Remove duplicate authentication call - already handled in initializeApp
   }
 }
